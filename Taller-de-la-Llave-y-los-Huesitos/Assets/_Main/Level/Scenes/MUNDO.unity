@@ -1771,7 +1771,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _Huesitos: 0
-  _MuslitosNaranjas: 3
+  _MuslitoNaranja: 3
   _Tiempo: 60
   _Llave: 0
   huesitosText: {fileID: 435180301}
@@ -3803,6 +3803,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2143729e756546428f08b52631c3c37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  contador: {fileID: 356812460}
 --- !u!70 &776932066
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -5815,6 +5816,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39f4baea63c66e8448b7a491cece21e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  contador: {fileID: 356812460}
   tiempoExtra: 10
 --- !u!70 &1536747619
 CapsuleCollider2D:
@@ -6662,6 +6664,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99c00aa6c6b8f3d4bbfcc31f2d04b591, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  contador: {fileID: 356812460}
 --- !u!70 &1736125662
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

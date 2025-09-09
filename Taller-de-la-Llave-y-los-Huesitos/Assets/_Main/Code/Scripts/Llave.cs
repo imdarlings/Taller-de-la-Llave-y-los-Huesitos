@@ -6,6 +6,11 @@ public class Llave : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
+            Contador contador = FindFirstObjectByType<Contador>();
+            if (contador != null)
+            {
+                contador.RecolectarLlave();
+            }
             Destroy(gameObject); // desaparece la llave al recogerla
         }
     }

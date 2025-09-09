@@ -6,7 +6,7 @@ public class Contador : MonoBehaviour
 {
     [Header("Contadores")]
     [SerializeField] private int _Huesitos;
-    [SerializeField] private int _MuslitosNaranjas = 3; // vida inicial
+    [SerializeField] private int _MuslitoNaranja = 3; // vida inicial
     [SerializeField] private float _Tiempo = 60f; // tiempo inicial en segundos
     private bool tiempoActivo = true;
     [SerializeField] private int _Llave = 0; // 0 = no tiene llave, 1 = tiene llave
@@ -20,7 +20,7 @@ public class Contador : MonoBehaviour
     [Header("Obstáculo")]
     [SerializeField] private GameObject ObstaculoLlave;
 
-    public int MuslitosNaranjas { get => _MuslitosNaranjas; set => _MuslitosNaranjas = value; }
+    public int MuslitoNaranja { get => _MuslitoNaranja; set => _MuslitoNaranja = value; }
 
     void Start()
     {
@@ -36,7 +36,7 @@ public class Contador : MonoBehaviour
             {
                 _Tiempo = 0;
                 tiempoActivo = false;
-                GameManager.instance.PerderJuego("GAME OVER"); // Llama al GameManager para manejar la derrota
+                GameManager.instance.PerderJuego("¡PERDISTE!"); // Llama al GameManager para manejar la derrota
             }
             ActualizarUI();
         }
@@ -54,18 +54,18 @@ public class Contador : MonoBehaviour
 
     public void RecolectarMuslitoNaranja(int vidaExtra = 1)
     {
-        MuslitosNaranjas += vidaExtra;
+        MuslitoNaranja += vidaExtra;
         ActualizarUI();
     }
 
     public void PerderVida(int daño = 1)
     {
-        MuslitosNaranjas -= daño;
-        if (MuslitosNaranjas <= 0)
+        MuslitoNaranja -= daño;
+        if (MuslitoNaranja <= 0)
         {
-            MuslitosNaranjas = 0;
+            MuslitoNaranja = 0;
             tiempoActivo = false;
-            GameManager.instance.PerderJuego("GAME OVER");
+            GameManager.instance.PerderJuego("¡PERDISTE!");
         }
         ActualizarUI();
     }
@@ -96,7 +96,7 @@ public class Contador : MonoBehaviour
     private void ActualizarUI()
     {
         huesitosText.text = $"Huesitos: {_Huesitos}";
-        muslitosNaranjasText.text = $"Vida: {MuslitosNaranjas}";
+        muslitosNaranjasText.text = $"Vida: {MuslitoNaranja}";
 
         int segundos = Mathf.CeilToInt(_Tiempo);
         tiempoText.text = $"Tiempo: {segundos}";
