@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    public void GanarJuego()
+    public void GanarJuego(string mensaje)
     {
         if (panelVictoria != null)
         {
@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0f; // pausa el juego
     }
 
-    public void PerderJuego(string razon)
+    public void PerderJuego(string mensaje)
     {
         if (panelDerrota != null)
         {
@@ -54,10 +54,33 @@ public class GameManager : MonoBehaviour
         StartCoroutine(ReiniciarDespues(5f)); // Reinicia después de 5 segundos
     }
 
-    private IEnumerator
-    ReiniciarDespues(float segundos)
+    private IEnumerator ReiniciarDespues(float segundos)
     {
         yield return new WaitForSecondsRealtime(segundos);
         ReiniciarEscena();
+    }
+
+    // Mueve la función EstadoDeJuego dentro de la clase GameManager
+    public void EstadoDeJuego(string estado)
+    {
+        switch (estado)
+        {
+            case "Play":
+                Time.timeScale = 1f; // Reanuda el juego
+                if (panelVictoria != null) panelVictoria.SetActive(false);
+                if (panelDerrota != null) panelDerrota.SetActive(false);
+                if (victoriaText != null) victoriaText.text = "";
+                if (derrotaText != null) derrotaText.text = "";
+                break;
+            case "Pause":
+                Time.timeScale = 0f; // Pausa el juego
+                break;
+            case "Ganar":
+                GanarJuego("¡GANASTE!");
+                break;
+            case "Perder":
+                PerderJuego("¡PERDISTE!");
+                break;
+        }
     }
 }
