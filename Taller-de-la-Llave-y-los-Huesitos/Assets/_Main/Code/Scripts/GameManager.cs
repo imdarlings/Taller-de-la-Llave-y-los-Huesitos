@@ -1,86 +1,84 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using TMPro;
-using System;
-using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
-    [Header("UI")]
-    [SerializeField] private GameObject panelVictoria;
-    [SerializeField] private TMP_Text victoriaText;
+    public UIManager uiManager;
 
-    [SerializeField] private GameObject panelDerrota;
-    [SerializeField] private TMP_Text derrotaText;
+    [Header("Valores del juego")]
+    [SerializeField] private int _Huesitos;
+    [SerializeField] private int _Vidas = 3; // vida inicial
+    [SerializeField] private float _Tiempo = 60f; // tiempo inicial en segundos
+    private bool tiempoActivo = true;
+    [SerializeField] private int _Llave = 0; // 0 = no tiene llave, 1 = tiene llave
 
-    private void Awake()
+
+    [Header("Obstáculo")]
+    [SerializeField] private GameObject ObstaculoLlave;
+
+    void Update()
     {
-        if (instance == null)
+        if (tiempoActivo)
         {
-            instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
-
-    public void ReiniciarEscena()
-    {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
-    public void GanarJuego(string mensaje)
-    {
-        if (panelVictoria != null)
-        {
-            panelVictoria.SetActive(true);
-            victoriaText.text = "¡GANASTE!";
-        }
-        Time.timeScale = 0f; // pausa el juego
-    }
-
-    public void PerderJuego(string mensaje)
-    {
-        if (panelDerrota != null)
-        {
-            panelDerrota.SetActive(true);
-            derrotaText.text = "¡PERDISTE!";
-        }
-        Time.timeScale = 0f;
-        StartCoroutine(ReiniciarDespues(5f)); // Reinicia después de 5 segundos
-    }
-
-    private IEnumerator ReiniciarDespues(float segundos)
-    {
-        yield return new WaitForSecondsRealtime(segundos);
-        ReiniciarEscena();
-    }
-
-    // Mueve la función EstadoDeJuego dentro de la clase GameManager
-    public void EstadoDeJuego(string estado)
-    {
-        switch (estado)
-        {
-            case "Play":
-                Time.timeScale = 1f; // Reanuda el juego
-                if (panelVictoria != null) panelVictoria.SetActive(false);
-                if (panelDerrota != null) panelDerrota.SetActive(false);
-                if (victoriaText != null) victoriaText.text = "";
-                if (derrotaText != null) derrotaText.text = "";
-                break;
-            case "Pause":
-                Time.timeScale = 0f; // Pausa el juego
-                break;
-            case "Ganar":
-                GanarJuego("¡GANASTE!");
-                break;
-            case "Perder":
-                PerderJuego("¡PERDISTE!");
-                break;
+            _Tiempo -= Time.deltaTime;
+            if (_Tiempo <= 0)
+            {
+                _Tiempo = 0;
+                tiempoActivo = false;
+                UIManager.instance.PanelDerrota ("¡PERDISTE!"); // Llama al GameManager para manejar la derrota
+            }
+            uiManager.ActualizarTiempo (_Tiempo);
         }
     }
-}
+
+    public void RecolectarHuesito()
+    {
+        _Huesitos++;
+        if (_Huesitos >= 10 && ObstaculoLlave != null)
+        {
+            ObstaculoLlave.SetActive(false); // Elimina el obstáculo
+        }
+        uiManager.ActualizarPuntos (_Huesitos);
+    }
+
+    public void RecolectarMuslitoNaranja(int vidaExtra = 1)
+    {
+        MuslitoNaranja += vidaExtra;
+        uiManager.ActualizarVidas (_Vidas);
+    }
+
+    public void PerderVida(int daño = 1)
+    {
+        MuslitoNaranja -= daño;
+        if (MuslitoNaranja <= 0)
+        {
+            MuslitoNaranja = 0;
+            tiempoActivo = false;
+            GameManager.instance.PerderJuego("¡PERDISTE!");
+        }
+        ActualizarUI();
+    }
+
+
+    public void RecolectarMuslitoAzul(float tiempoExtra = 10f)
+    {
+        _Tiempo += tiempoExtra;
+        ActualizarUI();
+    }
+
+    public void RecolectarLlave()
+    {
+        if (_Huesitos >= 10)
+        {
+            ObstaculoLlave.SetActive(false); // Elimina el obstáculo
+            _Llave = 1;
+            ActualizarUI();
+        }
+    }
+
+    public bool TieneLlave()
+    {
+        return _Llave == 1;
+    }
+

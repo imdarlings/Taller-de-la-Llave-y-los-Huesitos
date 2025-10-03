@@ -1,4 +1,3 @@
-// --- UIManager ---
 using TMPro;
 using UnityEngine;
 
