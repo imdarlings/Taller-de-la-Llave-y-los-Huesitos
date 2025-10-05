@@ -2,14 +2,21 @@ using UnityEngine;
 
 public class MuslitoAzul : MonoBehaviour
 {
-    public Contador contador;
-    public float tiempoExtra = 10f; // puedes cambiarlo desde el inspector
+    public float tiempoExtra = 10f; // tiempo que suma
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
         {
-            contador.RecolectarMuslitoAzul(tiempoExtra);
+            if (GameManager.instance != null)
+            {
+                GameManager.instance.RecolectarMuslitoAzul(tiempoExtra);
+            }
+            else
+            {
+                Debug.LogError("No se encontró GameManager en la escena");
+            }
+
             Destroy(gameObject);
         }
     }

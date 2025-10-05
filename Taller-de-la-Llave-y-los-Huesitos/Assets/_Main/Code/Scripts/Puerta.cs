@@ -6,15 +6,13 @@ public class Puerta : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            // Buscar el contador en la escena
-            Contador contador = FindFirstObjectByType<Contador>();
+            GameManager gameManager = FindFirstObjectByType<GameManager>();
 
-            if (contador != null)
+            if (gameManager != null)
             {
-                // Solo gana si tiene la llave
-                if (contador.TieneLlave())
+                if (gameManager.TieneLlave())
                 {
-                    GameManager.instance.GanarJuego();
+                    gameManager.uiManager.MostrarVictoria();
                 }
             }
         }

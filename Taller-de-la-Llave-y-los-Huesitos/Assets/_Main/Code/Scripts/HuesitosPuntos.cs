@@ -2,14 +2,21 @@ using UnityEngine;
 
 public class HuesitoPuntos : MonoBehaviour
 {
-    public Contador contador;
+    public GameManager gameManager;
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
         {
-            contador.RecolectarHuesito();
-            Debug.Log("Huesito recogido! Sumar puntos.");
-            Destroy(gameObject); // Destruye el huesito después de recogerlo
+            if (GameManager.instance != null)
+            {
+                GameManager.instance.RecolectarHuesito();
+            }
+            else
+            {
+                Debug.LogError("No se encontró GameManager en la escena");
+            }
+
+            Destroy(gameObject);
         }
     }
 }

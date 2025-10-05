@@ -2,14 +2,21 @@ using UnityEngine;
 
 public class MuslitoNaranja : MonoBehaviour
 {
-    public Contador contador;
+    public GameManager gameManager;
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
         {
-            contador.RecolectarMuslitoNaranja();
-            Debug.Log("Muslito Naranja recogido! Sumar vida.");
-            Destroy(gameObject); // Destruye el muslito después de recogerlo
+            if (GameManager.instance != null)
+            {
+                GameManager.instance.RecolectarMuslitoNaranja();
+            }
+            else
+            {
+                Debug.LogError("No se encontró GameManager en la escena");
+            }
+
+            Destroy(gameObject);
         }
     }
 }
