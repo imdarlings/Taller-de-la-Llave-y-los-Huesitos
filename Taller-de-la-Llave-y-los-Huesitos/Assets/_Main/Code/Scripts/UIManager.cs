@@ -14,11 +14,16 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject panelDerrota;
     [SerializeField] private TMP_Text victoriaText;
     [SerializeField] private TMP_Text derrotaText;
-   
+
     private void Awake()
     {
         if (instance == null) instance = this;
         else Destroy(gameObject);
+    }
+
+    private void Start()
+    {
+        Debug.Log("UIManager Iniciado");
     }
 
     public void ActualizarPuntos(int puntos) => puntosText.text = $"Huesitos: {puntos}";
@@ -37,3 +42,4 @@ public class UIManager : MonoBehaviour
         derrotaText.text = razon;
     }
 }
+
