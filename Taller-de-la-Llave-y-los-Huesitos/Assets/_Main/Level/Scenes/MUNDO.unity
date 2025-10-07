@@ -13204,7 +13204,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiManager: {fileID: 1950716240}
-  Huesitos: 0
+  Huesitos: 9
   Vidas: 3
   Tiempo: 60
   Llave: 0

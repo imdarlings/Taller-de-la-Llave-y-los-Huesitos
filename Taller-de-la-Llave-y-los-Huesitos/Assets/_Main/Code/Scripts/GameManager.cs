@@ -1,122 +1,158 @@
-using System;
-using UnityEditor.Experimental.GraphView;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-
     public UIManager uiManager;
-    
+
+    private bool tiempoActivo = true;
+    private bool juegoTerminado = false;
+
+    [Header("Valores del juego")]
+    [SerializeField] private int Huesitos;
+    [SerializeField] private int Vidas = 3;
+    [SerializeField] private float Tiempo = 60f;
+    public int Llave = 0;
+
+    [Header("Obstáculo")]
+    [SerializeField] private GameObject ObstaculoLlave;
+
     private void Awake()
     {
         if (instance == null)
         {
             instance = this;
-
-         DontDestroyOnLoad(gameObject);
         }
         else
         {
             Destroy(gameObject);
         }
-
     }
 
     private void Start()
     {
         Debug.Log("GameManager iniciado");
 
+        // Reasignar UIManager si no existe (por si la escena cambió)
+        if (uiManager == null)
+        {
+            uiManager = Object.FindFirstObjectByType<UIManager>();
+            if (uiManager != null)
+                Debug.Log("UIManager reconectado automáticamente.");
+            else
+                Debug.LogError("UIManager no encontrado en la escena.");
+        }
+
+        ActualizarUIInicial();
+    }
+
+    private void ActualizarUIInicial()
+    {
         if (uiManager != null)
         {
             uiManager.ActualizarPuntos(Huesitos);
             uiManager.ActualizarVidas(Vidas);
             uiManager.ActualizarTiempo(Tiempo);
-            uiManager.ActualizarLlave(false);
+            uiManager.ActualizarLlave(Llave == 1);
         }
-
-        else
-        {
-            Debug.LogError("No se encontro el UIManager en la escena");
-}
     }
 
-   
-
-    [Header("Valores del juego")]
-    [SerializeField] private int Huesitos;
-    [SerializeField] private int Vidas = 3; // vida inicial
-    [SerializeField] private float Tiempo = 60f; // tiempo inicial en segundos
-    private bool tiempoActivo = true;
-    [SerializeField] private int Llave = 0; // 0 = no tiene llave, 1 = tiene llave
-
-    [Header("Obstáculo")]
-    [SerializeField] private GameObject ObstaculoLlave;
-
-   
-    void Update()
+    private void Update()
     {
-        if (tiempoActivo)
+        if (!tiempoActivo || juegoTerminado) return;
+
+        Tiempo -= Time.deltaTime;
+        if (Tiempo <= 0)
         {
-            Tiempo -= Time.deltaTime;
-            if (Tiempo <= 0)
-            {
-                Tiempo = 0;
-                tiempoActivo = false;
-                uiManager.MostrarDerrota("¡PERDISTE!"); // Llama al UIManager para manejar la derrota
-            }
-            uiManager.ActualizarTiempo(Tiempo);
+            Tiempo = 0;
+            PerderJuego("¡PERDISTE!");
         }
+        uiManager?.ActualizarTiempo(Tiempo);
     }
 
     public void RecolectarHuesito()
     {
+        if (juegoTerminado) return;
         Huesitos++;
         if (Huesitos >= 10 && ObstaculoLlave != null)
         {
-            ObstaculoLlave.SetActive(false); // Elimina el obstáculo
+            ObstaculoLlave.SetActive(false);
         }
-        uiManager.ActualizarPuntos(Huesitos);
+        uiManager?.ActualizarPuntos(Huesitos);
     }
 
     public void RecolectarMuslitoNaranja(int vidaExtra = 1)
     {
+        if (juegoTerminado) return;
         Vidas += vidaExtra;
-        uiManager.ActualizarVidas(Vidas);
+        uiManager?.ActualizarVidas(Vidas);
     }
 
     public void PerderVida(int daño = 1)
     {
+        if (juegoTerminado) return;
         Vidas -= daño;
+        uiManager?.ActualizarVidas(Vidas);
+
         if (Vidas <= 0)
         {
             Vidas = 0;
-            tiempoActivo = false;
-            uiManager.MostrarDerrota("¡PERDISTE!");
+            PerderJuego("¡PERDISTE!");
         }
-        uiManager.ActualizarVidas(Vidas);
     }
-
 
     public void RecolectarMuslitoAzul(float tiempoExtra = 10f)
     {
+        if (juegoTerminado) return;
         Tiempo += tiempoExtra;
-        uiManager.ActualizarTiempo(Tiempo);
-    } // <-- Se añadió el punto y coma y la llave de cierre
+        uiManager?.ActualizarTiempo(Tiempo);
+    }
 
     public void RecolectarLlave()
     {
+        if (juegoTerminado) return;
         if (Huesitos >= 10)
         {
-            ObstaculoLlave.SetActive(false); // Elimina el obstáculo
             Llave = 1;
-            uiManager.ActualizarLlave(true);
+            ObstaculoLlave?.SetActive(false);
+            uiManager?.ActualizarLlave(true);
         }
     }
 
-    public bool TieneLlave()
+    public void GanarJuego()
     {
-        return Llave == 1;
+        if (juegoTerminado) return;
+
+        juegoTerminado = true;
+        tiempoActivo = false;
+        Time.timeScale = 0f;
+
+        Debug.Log("¡GANASTE!");
+        uiManager?.MostrarVictoria();
+    }
+
+    public void PerderJuego(string razon = "¡PERDISTE!")
+    {
+        if (juegoTerminado) return;
+
+        juegoTerminado = true;
+        tiempoActivo = false;
+        Time.timeScale = 0f;
+
+        Debug.Log(razon);
+        uiManager?.MostrarDerrota(razon);
+
+        StartCoroutine(ReiniciarDespues(5f));
+    }
+
+    private IEnumerator ReiniciarDespues(float segundos)
+    {
+        yield return new WaitForSecondsRealtime(segundos);
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        juegoTerminado = false;
     }
 
     public void EstadoDelJuego(string estado)
@@ -124,26 +160,20 @@ public class GameManager : MonoBehaviour
         switch (estado)
         {
             case "Ganar":
-                uiManager.MostrarVictoria();
+                GanarJuego();
                 break;
             case "Perder":
-                uiManager.MostrarDerrota("¡PERDISTE!");
+                PerderJuego();
                 break;
             case "Play":
-                Time.timeScale = 1;
+                Time.timeScale = 1f;
                 break;
             case "Pausa":
-                Time.timeScale = 0;
+                Time.timeScale = 0f;
                 break;
             default:
-                Debug.LogWarning("Estado del juego desconocido: " + estado);
+                Debug.LogWarning("Estado desconocido: " + estado);
                 break;
         }
     }
-
-    internal void RecolectarHuesito(object huesitos)
-    {
-        throw new NotImplementedException();
-    }
 }
-

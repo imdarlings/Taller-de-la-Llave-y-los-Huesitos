@@ -10,9 +10,10 @@ public class Puerta : MonoBehaviour
 
             if (gameManager != null)
             {
-                if (gameManager.TieneLlave())
+                // Cambiado: comprobar si el jugador tiene la llave usando la propiedad 'Llave'
+                if (gameManager.Llave > 0)
                 {
-                    gameManager.uiManager.MostrarVictoria();
+                    GameManager.instance.GanarJuego();
                 }
             }
         }
