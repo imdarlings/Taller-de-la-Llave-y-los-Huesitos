@@ -1,51 +1,56 @@
-using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class UIManager : MonoBehaviour
 {
-    public static UIManager instance;
-
-    [SerializeField] private TextMeshProUGUI puntosText;
-    [SerializeField] private TextMeshProUGUI vidasText;
+    [Header("Contadores UI")]
+    [SerializeField] private TextMeshProUGUI huesitosText;
     [SerializeField] private TextMeshProUGUI tiempoText;
     [SerializeField] private TextMeshProUGUI llaveText;
+    [SerializeField] private Image llaveIcono;
 
+    [Header("Corazones")]
+    [SerializeField] private Image[] corazones;
+    [SerializeField] private Sprite corazonLleno;
+    [SerializeField] private Sprite corazonVacio;
+
+    [Header("Paneles")]
     [SerializeField] private GameObject panelVictoria;
     [SerializeField] private GameObject panelDerrota;
-    [SerializeField] private TMP_Text victoriaText;
-    [SerializeField] private TMP_Text derrotaText;
 
-    private void Awake()
+    public void ActualizarPuntos(int cantidad)
     {
-        if (instance == null)
+        huesitosText.text = $"{cantidad}";
+    }
+
+    public void ActualizarTiempo(float tiempo)
+    {
+        int segundos = Mathf.CeilToInt(tiempo);
+        tiempoText.text = $"{segundos}s";
+    }
+
+    public void ActualizarVidas(int vidas)
+    {
+        for (int i = 0; i < corazones.Length; i++)
         {
-            instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
+            corazones[i].sprite = (i < vidas) ? corazonLleno : corazonVacio;
         }
     }
 
-    private void Start()
+    public void ActualizarLlave(bool tieneLlave)
     {
-        Debug.Log("UIManager Iniciado");
+        llaveText.text = tieneLlave ? "Sí" : "No";
+        llaveIcono.enabled = tieneLlave;
     }
-
-    public void ActualizarPuntos(int puntos) => puntosText.text = $"Huesitos: {puntos}";
-    public void ActualizarVidas(int vidas) => vidasText.text = $"Vidas: {vidas}";
-    public void ActualizarTiempo(float tiempo) => tiempoText.text = $"Tiempo: {Mathf.CeilToInt(tiempo)}";
-    public void ActualizarLlave(bool tieneLlave) => llaveText.text = $"Llave: {(tieneLlave ? "Sí" : "No")}";
 
     public void MostrarVictoria()
     {
         panelVictoria.SetActive(true);
     }
 
-    public void MostrarDerrota(string razon)
+    public void MostrarDerrota(string mensaje)
     {
         panelDerrota.SetActive(true);
-        derrotaText.text = razon;
     }
 }
-

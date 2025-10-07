@@ -55,7 +55,7 @@ public class GameManager : MonoBehaviour
             uiManager.ActualizarPuntos(Huesitos);
             uiManager.ActualizarVidas(Vidas);
             uiManager.ActualizarTiempo(Tiempo);
-            uiManager.ActualizarLlave(Llave == 1);
+            uiManager.ActualizarLlave(Llave == 1); // Cambiado de Llave a Llave == 1
         }
     }
 
