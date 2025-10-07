@@ -8,49 +8,55 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI huesitosText;
     [SerializeField] private TextMeshProUGUI tiempoText;
     [SerializeField] private TextMeshProUGUI llaveText;
-    [SerializeField] private Image llaveIcono;
 
-    [Header("Corazones")]
+    [Header("Corazones (Vidas)")]
     [SerializeField] private Image[] corazones;
     [SerializeField] private Sprite corazonLleno;
     [SerializeField] private Sprite corazonVacio;
 
-    [Header("Paneles")]
+    [Header("Paneles de Estado")]
     [SerializeField] private GameObject panelVictoria;
     [SerializeField] private GameObject panelDerrota;
 
     public void ActualizarPuntos(int cantidad)
     {
-        huesitosText.text = $"{cantidad}";
+        if (huesitosText != null)
+            huesitosText.text = $"{cantidad}";
     }
 
     public void ActualizarTiempo(float tiempo)
     {
-        int segundos = Mathf.CeilToInt(tiempo);
-        tiempoText.text = $"{segundos}s";
+        if (tiempoText != null)
+        {
+            int segundos = Mathf.CeilToInt(tiempo);
+            tiempoText.text = $"{segundos}s";
+        }
     }
 
     public void ActualizarVidas(int vidas)
     {
         for (int i = 0; i < corazones.Length; i++)
         {
-            corazones[i].sprite = (i < vidas) ? corazonLleno : corazonVacio;
+            if (corazones[i] != null)
+                corazones[i].sprite = (i < vidas) ? corazonLleno : corazonVacio;
         }
     }
 
     public void ActualizarLlave(bool tieneLlave)
     {
-        llaveText.text = tieneLlave ? "Sí" : "No";
-        llaveIcono.enabled = tieneLlave;
+        if (llaveText != null)
+            llaveText.text = tieneLlave ? "Sí" : "No";
     }
 
     public void MostrarVictoria()
     {
-        panelVictoria.SetActive(true);
+        if (panelVictoria != null)
+            panelVictoria.SetActive(true);
     }
 
     public void MostrarDerrota(string mensaje)
     {
-        panelDerrota.SetActive(true);
+        if (panelDerrota != null)
+            panelDerrota.SetActive(true);
     }
 }
