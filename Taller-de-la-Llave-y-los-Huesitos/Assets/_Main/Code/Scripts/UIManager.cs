@@ -17,6 +17,7 @@ public class UIManager : MonoBehaviour
     [Header("Paneles de Estado")]
     [SerializeField] private GameObject panelVictoria;
     [SerializeField] private GameObject panelDerrota;
+    [SerializeField] private GameObject panelPausa;
 
     public void ActualizarPuntos(int cantidad)
     {
@@ -58,5 +59,10 @@ public class UIManager : MonoBehaviour
     {
         if (panelDerrota != null)
             panelDerrota.SetActive(true);
+    }
+    public void MostrarPausa(bool enPausa)
+    {
+        if (panelPausa != null)
+            panelPausa.SetActive(enPausa);
     }
 }

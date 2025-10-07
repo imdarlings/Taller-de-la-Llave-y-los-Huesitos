@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
 
     private bool tiempoActivo = true;
     private bool juegoTerminado = false;
+    private bool juegoPausado = false;
 
     [Header("Valores del juego")]
     [SerializeField] private int Huesitos;
@@ -167,9 +168,20 @@ public class GameManager : MonoBehaviour
                 break;
             case "Play":
                 Time.timeScale = 1f;
+                if (juegoPausado)
+                {
+                    juegoPausado = false;
+                    uiManager?.MostrarPausa(false);
+                }
                 break;
             case "Pausa":
                 Time.timeScale = 0f;
+                juegoPausado = true;
+                uiManager?.MostrarPausa(true);
+                break;
+            case "Menu":
+                Time.timeScale = 1f; 
+                SceneManager.LoadScene("MenuPrincipal"); 
                 break;
             default:
                 Debug.LogWarning("Estado desconocido: " + estado);
