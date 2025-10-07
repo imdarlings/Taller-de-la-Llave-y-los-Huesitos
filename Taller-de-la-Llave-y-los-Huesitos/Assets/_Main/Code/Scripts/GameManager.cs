@@ -36,7 +36,6 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("GameManager iniciado");
 
-        // Reasignar UIManager si no existe (por si la escena cambió)
         if (uiManager == null)
         {
             uiManager = Object.FindFirstObjectByType<UIManager>();
@@ -48,7 +47,7 @@ public class GameManager : MonoBehaviour
 
         ActualizarUIInicial();
     }
-
+       
     private void ActualizarUIInicial()
     {
         if (uiManager != null)
@@ -56,12 +55,20 @@ public class GameManager : MonoBehaviour
             uiManager.ActualizarPuntos(Huesitos);
             uiManager.ActualizarVidas(Vidas);
             uiManager.ActualizarTiempo(Tiempo);
-            uiManager.ActualizarLlave(Llave == 1); // Cambiado de Llave a Llave == 1
+            uiManager.ActualizarLlave(Llave == 1); 
         }
     }
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (!juegoPausado)
+                EstadoDelJuego("Pausa");
+            else
+                EstadoDelJuego("Play");
+        }
+
         if (!tiempoActivo || juegoTerminado) return;
 
         Tiempo -= Time.deltaTime;
@@ -178,6 +185,10 @@ public class GameManager : MonoBehaviour
                 Time.timeScale = 0f;
                 juegoPausado = true;
                 uiManager?.MostrarPausa(true);
+                break;
+            case "Reiniciar":
+                Time.timeScale = 1f; 
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name); 
                 break;
             case "Menu":
                 Time.timeScale = 1f; 
